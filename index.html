@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>一年级科学选择题测验</title>
+<style>
+/* ====== 全局字体与背景 ====== */
+body {
+  font-family: "ZCOOL KuaiLe", "Microsoft YaHei", sans-serif;
+  font-size: 18px; 
+  background: url('https://static.vecteezy.com/system/resources/previews/033/247/266/non_2x/abstract-background-pink-blue-pastel-color-free-vector.jpg') no-repeat center center fixed;
+  background-size: cover;
+  padding: 20px;
+  color: #333;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+/* 主标题 */
+h1 {
+  font-size: 2.4rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  text-shadow: 2px 2px 0px #fff;
+}
+
+/* ====== 容器样式 (共用) ====== */
+#quiz-container {
+  background: rgba(255,255,255,0.9); /* 调整透明度使其更清晰 */
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2), 0 0 20px rgba(255,255,255,0.5) inset;
+  backdrop-filter: blur(6px);
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.8s forwards;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ====== 1. 开始画面样式 ====== */
+#start-screen {
+  text-align: center;
+  padding: 10px;
+}
+
+.input-group {
+  margin-bottom: 25px;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.input-group label {
+  display: block;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #444;
+}
+
+.input-group input, 
+.input-group select {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.2rem;
+  border: 3px solid #d0d0d0;
+  border-radius: 12px;
+  box-sizing: border-box;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+  border-color: #7dbbff;
+}
+
+#startBtn {
+  font-size: 1.8rem;
+  padding: 12px 50px;
+  background: #ff9f43; /* 橙色按钮 */
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #e67e22;
+  transition: transform 0.1s;
+  margin-top: 10px;
+}
+
+#startBtn:active {
+  transform: translateY(4px);
+  box-shadow: none;
+}
+
+/* ====== 2. 测验内容样式 (初始隐藏) ====== */
+#quiz-content {
+  display: none;
+}
+
+#student-info-display {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1rem;
+  color: #666;
+  background: rgba(255,255,255,0.8);
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+#q-index {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #555;
+  margin-top: 10px;
+}
+
+#question {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  line-height: 1.5;
+  font-weight: bold;
+}
+
+/* 选项样式 */
+.opt {
+  font-size: 1.6rem;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 15px;
+  border: 3px solid #e0e0e0;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.opt:hover {
+  transform: translateY(-3px);
+  border-color: #7dbbff;
+  background: #f0f8ff;
+}
+
+.opt.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+.opt.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+/* 底部控制栏 */
+.controls {
+  margin-top: 30px;
+  text-align: center;
+  border-top: 2px dashed #eee;
+  padding-top: 20px;
+}
+
+#nextBtn, #finishBtn {
+  font-size: 1.5rem;
+  padding: 12px 30px;
+  background: #7dbbff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #2980b9;
+}
+
+#nextBtn:disabled {
+  background: #ccc;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+#finishBtn { display: none; background: #2ecc71; box-shadow: 0 4px 0 #27ae60; }
+
+#restart {
+  font-size: 1.1rem;
+  padding: 8px 16px;
+  margin-left: 15px;
+  background: transparent;
+  border: 2px solid #999;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #666;
+}
+
+.score {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #e67e22;
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 1.6rem;
+  text-align: center;
+  line-height: 1.6;
+  color: #2c3e50;
+}
+</style>
+</head>
+<body>
+<h1>一年级科学选择题测验</h1>
+
+<div id="quiz-container">
+  
+  <div id="start-screen">
+      <div class="input-group">
+          <label for="student-name">姓名：</label>
+          <input type="text" id="student-name" placeholder="请输入你的名字" autocomplete="off">
+      </div>
+      <div class="input-group">
+          <label for="student-class">班级：</label>
+          <select id="student-class">
+              <option value="">请选择班级</option>
+              <option value="1M">1M</option>
+              <option value="1K">1K</option>
+              <option value="1B">1B</option>
+              <option value="1H">1H</option>
+              <option value="1J">1J</option>
+          </select>
+      </div>
+      <button id="startBtn">开始测验</button>
+  </div>
+
+  <div id="quiz-content">
+      <div id="student-info-display"></div>
+      
+      <div id="q-index">第 <span id="cur">1</span> / <span id="total">0</span> 题</div>
+      <div id="question"></div>
+      <div id="options"></div>
+      
+      <div class="controls">
+        <div class="score" id="score">得分：0</div>
+        <button id="nextBtn" disabled>下一题</button>
+        <button id="finishBtn">完成测验</button>
+        <button id="restart">重做</button>
+      </div>
+      
+      <div id="result"></div>
+  </div>
+
+</div>
+
+<script>
+// ====== 题库数据 ======
+const rawData = `
+1,[1.1.1 观察] 当我们用眼睛看彩虹的颜色，用耳朵听小鸟的叫声时，我们正在运用哪种科学程序技能？ A. 分类 B. 观察 C. 预测 D. 推断,B
+2,[1.1.2 分类] 小明把铁钉和回形针分成一组，把塑料尺和橡皮擦分成另一组，他运用了什么技能？ A. 分类 B. 测量与应用数目 C. 沟通 D. 预测,A
+3,[1.1.4 推断] 下列哪项关于“推断”的说明是正确的？ A. 预测未来可能发生的事 B. 用尺测量物体的长度 C. 用图表记录观察结果 D. 根据观察讲述一个合理的解释,D
+4,[1.2.2 操纵性技能] 在科学室里完成观察活动后，我们应该怎样处理活标本（如蜗牛）？ A. 随手扔进垃圾桶 B. 用水冲下马桶 C. 锁在抽屉里 D. 正确和小心地放回大自然,D
+5,[1.2.4 & 1.2.5 操纵性技能] 使用完科学仪器和材料后，正确的处理步骤是什么？ A. 清理干净并正确安全地储存 B. 放在桌上直接离开课室 C. 拿回课室当玩具 D. 丢弃到室外草地上,A
+6,[2.1.1 科学室规则] 进入科学室之前，学生应该遵从哪项规则？ A. 可以在里面吃东西和跑步 B. 随意拿取实验台上的仪器 C. 必须获得老师的许可并排队进入 D. 把垃圾丢在实验台下,C
+7,[3.1.1 生物与非生物] 下列哪项属于“生物”？ A. 汽车 B. 风扇 C. 气球 D. 猫,D
+8,[3.1.2 生物的特征] 汽车能够移动，吹大的气球会变大，但它们都不是生物。为什么？ A. 因为它们不会呼吸、不需要食物和水，也不会繁殖 B. 因为它们太重了 C. 因为它们没有颜色 D. 因为它们生活在水里,A
+9,[3.1.2 生物体型顺序] 将下列生物按体型从“小到大”顺序排列： A. 大象 → 蚂蚁 → 兔 B. 蚂蚁 → 兔 → 大象 C. 兔 → 大象 → 蚂蚁 D. 大象 → 兔 → 蚂蚁,B
+10,[3.2.1 生物的基本需求] 下列哪组属于生物维持生存的基本需求？ A. 食物、水、空气 B. 玩具、衣服、手机 C. 汽车、房屋、电视 D. 阳光、土壤、金钱,A
+11,[4.1.1 人类的感官器官] 舌头是人类的哪种感觉器官？ A. 视觉器官 B. 嗅觉器官 C. 味觉器官 D. 听觉器官,C
+12,[4.1.2 感觉官能的应用] 我们用什么感觉官能来确认物体表面的粗糙或光滑？ A. 听觉 B. 触觉（皮肤） C. 味觉 D. 嗅觉,B
+13,[4.1.4 感觉官能辅助工具] 当一个人的视觉变弱（视力不佳）时，什么工具可以帮助改善视力？ A. 助听器 B. 拐杖 C. 轮椅 D. 眼镜,D
+14,[4.1.3 危险气味识别] 当我们闻到火灾产生的浓烟味时，我们使用了哪种感官？ A. 嗅觉（鼻子） B. 味觉（舌头） C. 听觉（耳朵） D. 触觉（皮肤）,A
+15,[5.1.1 动物身体部位] 鸟类和鸭子用来进食和取食的身体部位叫什么？ A. 喙 B. 鳍 C. 犀角 D. 硬皮,A
+16,[5.1.2 部位的重要性] 鱼的“鳍”主要有什么重要作用？ A. 用来在陆地上行走 B. 帮助在水中游泳和维持平衡 C. 用来抓握食物 D. 用来保护头部,B
+17,[5.1.1 动物部位分类] 下列哪组动物都拥有“外壳”来保护身体？ A. 蜗牛和乌龟 B. 兔子和青蛙 C. 苍蝇和鱼 D. 鸭子和蚯蚓,A
+18,[5.1.1 动物部位与特征] 苍蝇和蝴蝶用来飞行的身体部位是什么？ A. 蹼 B. 触角 C. 鳞片 D. 翅膀,D
+19,[6.1.1 植物部位 - 叶脉] 凤仙花和木槿的叶子通常具有什么种类的叶脉？ A. 平行脉 B. 网状脉 C. 圆形脉 D. 螺旋脉,B
+20,[6.1.1 植物部位 - 根] 具有平行脉的植物（如茅草、玉米），通常拥有什么种类的根？ A. 须根 B. 主根 C. 气生根 D. 块根,A
+21,[6.1.1 开花与不开花植物] 下列哪种植物属于“不开花植物”？ A. 木槿 B. 兰花 C. 羊齿植物（蕨类） D. 向日葵,C
+22,[6.1.1 茎的种类] 大树（如橡胶树）的茎强壮坚硬，属于什么茎？ A. 草质茎 B. 水质茎 C. 木质茎 D. 软茎,C
+23,[7.1.2 磁铁形状] 下列哪项不是常见的磁铁形状？ A. 条形磁铁 B. 马蹄形磁铁 C. 三角形磁铁 D. 钮扣形磁铁,C
+24,[7.1.3 磁性物体] 磁铁可以吸引下列哪种物体？ A. 塑料回形针 B. 铁钉 C. 木尺 D. 玻璃弹子,B
+25,[7.1.4 磁极性质] 当两个磁铁的相同磁极（如 N 极与 N 极）互相靠近时，会发生什么现象？ A. 互相吸引 B. 互相相斥（排斥） C. 变热 D. 没有任何反应,B
+26,[7.1.5 磁力] 进行公平研究时，怎样测试和确定一块磁铁磁力的强弱？ A. 测量磁铁的重量 B. 看磁铁的颜色 C. 用水冲洗磁铁 D. 测试磁铁能吸引回形针的数量,D
+27,[8.1.1 吸水与不透水] 下列哪种物体属于“吸水”材料？ A. 塑料瓶盖 B. 玻璃弹子 C. 手帕（棉布） D. 雨衣,C
+28,[8.1.4 不透水材料的重要性] 下雨天时我们穿雨衣，是因为雨衣具有什么特性？ A. 会吸水 B. 不透水（防雨） C. 能弯曲 D. 有磁性,B
+29,[9.2.1 土壤种类] 下列哪种土壤含有较多腐殖质，最适合用来种植花草？ A. 壤土 B. 黏土 C. 沙土 D. 石灰土,A
+30,[10.1.2 基本立体形状] 埃及金字塔的形状类似于下列哪种基本立体形状？ A. 正方体 B. 圆柱体 C. 球体 D. 棱锥体,D
+`;
+
+// ====== 数据解析 ======
+const data = rawData.trim().split("\n").map(line=>{
+  const parts = line.split(",");
+  const answer = parts.pop().trim().toUpperCase();
+  const qid = parts.shift();
+  const full = parts.join(",").trim();
+
+  const optStart = full.indexOf("A.");
+  const qtext = full.slice(0, optStart).trim();
+  const optRaw = full.slice(optStart);
+
+  const optParts = optRaw.split(/\s(?=[A-D]\.\s)/).map(s=>s.trim());
+  const opts = optParts.map(op => op.replace(/^[A-D]\.\s*/, ""));
+  while (opts.length < 4) opts.push("(缺失)");
+
+  return { q: qtext, options: opts, answer: {A:0,B:1,C:2,D:3}[answer] };
+});
+
+// ====== 全局变量 ======
+let current = 0;
+let score = 0;
+let answered = false;
+let studentName = "";
+let studentClass = "";
+
+// ====== DOM 元素 ======
+const startScreen = document.getElementById('start-screen');
+const quizContent = document.getElementById('quiz-content');
+const startBtn = document.getElementById('startBtn');
+const nameInput = document.getElementById('student-name');
+const classInput = document.getElementById('student-class');
+const infoDisplay = document.getElementById('student-info-display');
+
+document.getElementById('total').textContent = data.length;
+
+// ====== 1. 开始逻辑 ======
+startBtn.addEventListener('click', () => {
+    const sName = nameInput.value.trim();
+    const sClass = classInput.value;
+
+    if (!sName) {
+        alert("请填写你的名字！");
+        return;
+    }
+    if (!sClass) {
+        alert("请选择你的班级！");
+        return;
+    }
+
+    // 保存信息
+    studentName = sName;
+    studentClass = sClass;
+
+    // 切换界面
+    startScreen.style.display = 'none';
+    quizContent.style.display = 'block';
+    
+    // 显示学生信息
+    infoDisplay.textContent = `${studentName} (${studentClass})`;
+
+    // 加载第一题
+    loadQuestion();
+});
+
+// ====== 2. 测验逻辑 ======
+function loadQuestion(){
+  answered = false;
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('finishBtn').style.display = 'none';
+  document.getElementById('result').textContent = '';
+  
+  const q = data[current];
+  document.getElementById('question').textContent = q.q;
+  document.getElementById('cur').textContent = current + 1;
+
+  const optsDiv = document.getElementById('options');
+  optsDiv.innerHTML = '';
+  
+  q.options.forEach((opt,i)=>{
+    const div = document.createElement('div');
+    div.className='opt';
+    div.textContent = opt;
+    div.addEventListener('click',()=>selectOption(div,i));
+    optsDiv.appendChild(div);
+  });
+}
+
+function selectOption(el, index){
+  if(answered) return;
+  answered = true;
+  const q = data[current];
+  const all = document.querySelectorAll('.opt');
+  
+  all.forEach((d,i)=>{ if(i === q.answer) d.classList.add('correct'); });
+  
+  if(index !== q.answer) {
+      el.classList.add('wrong');
+  } else {
+      score++;
+  }
+  
+  document.getElementById('score').textContent = '得分：' + score;
+
+  if(current === data.length - 1){
+    document.getElementById('finishBtn').style.display = 'inline-block';
+    document.getElementById('nextBtn').style.display = 'none';
+  } else {
+    document.getElementById('nextBtn').disabled = false;
+    document.getElementById('nextBtn').style.display = 'inline-block';
+  }
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  current++;
+  loadQuestion();
+});
+
+document.getElementById('finishBtn').addEventListener('click', () => {
+  const resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = `
+      <div style="padding:20px; border:2px dashed #7dbbff; border-radius:15px; margin-top:20px;">
+          <p>🎉 恭喜 <strong>${studentName} (${studentClass})</strong>！</p>
+          <p>你完成了测验</p>
+          <p style="font-size:2.5rem; color:#e67e22; margin:10px 0;">${score} / ${data.length}</p>
+          <p>继续努力，让自己更棒！🌟</p>
+      </div>
+  `;
+  document.getElementById('finishBtn').style.display = 'none';
+});
+
+document.getElementById('restart').addEventListener('click', () => {
+  if(confirm('确定重做测验吗？成绩将归零。')){
+    current = 0;
+    score = 0;
+    document.getElementById('score').textContent = '得分：0';
+    document.getElementById('nextBtn').style.display = 'inline-block';
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('result').innerHTML = ''; // 清空结果
+    loadQuestion();
+  }
+});
+</script>
+</body>
+</html>
